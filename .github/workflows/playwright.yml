@@ -5,7 +5,7 @@ on:
   pull_request:
     branches: [ main, master ]
 jobs:
-  slack-init:
+  slack:
     runs-on: ubuntu-latest
     steps:
       - name: slack - GitHub Actions Slack integration
