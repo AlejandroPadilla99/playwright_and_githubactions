@@ -1,0 +1,13 @@
+slack:
+  channel: "#test"
+  username: GitHub-CI
+  icon_url: https://octodex.github.com/images/mona-the-rivetertocat.png
+  pretext: "Triggered via ${{ github.event_name }} by ${{ github.actor }}"
+  title: GitHub Actions
+  title_link: https://support.github.com
+  text: |
+    *<${{ github.workflow_run.url }}|Workflow _${{ github.workflow }}_ job _${{ github.job }}_ triggered by _${{ github.event_name }}_ is _${{ job.status }}_* for <${{ github.event.repository.url }}/tree/${{ github.ref }}|`${{ github.ref }}`>
+    ${{ github.event.commits && '*Commits*' }}
+    ${{ join(github.event.commits.*.message, '\n') }}
+  fallback: |-
+    [GitHub] ${{ github.workflow }} #${{ github.run_number }} ${{ github.job }} is ${{ job.status }}
