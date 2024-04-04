@@ -8,12 +8,39 @@ jobs:
   slack:
     runs-on: ubuntu-latest
     steps:
-      - name: slack - GitHub Actions Slack integration
-        uses: act10ns/slack@v2.0.0
+      - uses: act10ns/slack@v1
         with:
-          webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}
+          status: starting
+          channel: '#workflows'
+          message: Starting Docker Build and Push...
+        if: always()
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Variables
+        id: vars
+        run: echo "::set-output name=SHORT_COMMIT_ID::$(git rev-parse --short HEAD)"
+      - name: Build image
+        id: docker-build
+        run: >-
+          docker build
+          -t $IMAGE_NAME
+          -t $REPOSITORY_URL/$IMAGE_NAME:${{ steps.vars.outputs.SHORT_COMMIT_ID }}
+          -t $REPOSITORY_URL/$IMAGE_NAME:latest .
+      - name: Docker Login
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+        run: docker login $REPOSITORY_URL --username "$DOCKER_USERNAME" --password "$DOCKER_PASSWORD"
+      - name: Publish Image
+        id: docker-push
+        run: docker push $REPOSITORY_URL/$IMAGE_NAME
+
+      - uses: act10ns/slack@v1
+        with:
           status: ${{ job.status }}
-          message: Running testing
+          steps: ${{ toJson(steps) }}
+          channel: '#workflows'
+     
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
