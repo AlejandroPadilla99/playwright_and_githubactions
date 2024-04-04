@@ -44,7 +44,7 @@ slack:
       short: true
 
 footer: >-
-  <{{repositoryUrl}}|{{repositoryName}}> {{workflow}} #{{runNumber}}
+  <This is the footer: {{repositoryUrl}}|{{repositoryName}}> {{workflow}} #{{runNumber}}
 
 colors:
   success: '#5DADE2'
